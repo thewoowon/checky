@@ -1,0 +1,137 @@
+{
+  "extensionName": {
+    "message": "CHECKY - Just enter the link. We'll save you time!"
+  },
+  "extensionDescription": {
+    "message": "Just enter the link. We'll save you time!"
+  },
+  "dragGPT": {
+    "message": "CHECKY"
+  },
+  "noApiKeyPage_openAIApiKey_placeholder": {
+    "message": "OpenAI API Key"
+  },
+  "noApiKeyPage_checkingApiKey": {
+    "message": "Checking API Key...\nSending test request..."
+  },
+  "noApiKeyPage_howToGetApiKey": {
+    "message": "How to Get OpenAI API Key?"
+  },
+  "noApiKeyPage_howToGetApiKeyDetail1": {
+    "message": "If you don't have an OpenAI account, you need to {sign up}."
+  },
+  "noApiKeyPage_howToGetApiKeyDetail2": {
+    "message": "Go to the {API Key page}."
+  },
+  "noApiKeyPage_howToGetApiKeyDetail3": {
+    "message": "Click on the Create a new secret key button to generate an API key."
+  },
+  "noApiKeyPage_howToGetApiKeyDetail4": {
+    "message": "Copy the key, enter it, and click the Save button to get started!"
+  },
+  "footer_EmailText": {
+    "message": "Feature Suggestions / Bug Reports"
+  },
+  "noApiKeyPage_saveButtonText": {
+    "message": "Save"
+  },
+  "quickChattingPage_sendButtonText": {
+    "message": "Send"
+  },
+  "quickChattingPage_stopButtonText": {
+    "message": "Stop"
+  },
+  "quickChattingPage_chattingPlaceholder": {
+    "message": "e.g. Hello!"
+  },
+  "quickChattingPage_backButtonText": {
+    "message": "Back"
+  },
+  "quickChattingPage_resetButtonText": {
+    "message": "Reset Conversation"
+  },
+  "quickChattingPage_copyButtonText_copy": {
+    "message": "Copy Last Response"
+  },
+  "quickChattingPage_copyButtonText_copied": {
+    "message": "Copied!"
+  },
+  "quickChattingPage_isGpt4": {
+    "message": "GPT4"
+  },
+  "slotListPage_newSlotButtonText": {
+    "message": "Add Slot"
+  },
+  "slogListPage_showChatHistoryButtonText": {
+    "message": "History"
+  },
+  "slotListPage_quickChatButtonText": {
+    "message": "Quick Chat"
+  },
+  "slotListPage_resetApiKeyButtonText": {
+    "message": "Reset API Key"
+  },
+  "slotListPage_promptSlotsTitle": {
+    "message": "Prompt Slots"
+  },
+  "slotListPage_resetApiKeyConfirmMessage": {
+    "message": "Are you sure you want to reset the API key?"
+  },
+  "slotListItem_deleteButtonText": {
+    "message": "Delete"
+  },
+  "slotListItem_editButtonText": {
+    "message": "Edit"
+  },
+  "slotDetail_promptSlotName": {
+    "message": "Prompt Slot Name"
+  },
+  "slotDetail_promptSlotName_placeholder": {
+    "message": "e.g. English to Korean Translation"
+  },
+  "slotDetail_writePromptTitle": {
+    "message": "Please write the pre-defined prompt for ChatGPT requests (up to 2000 characters)"
+  },
+  "slotDetail_promptInputPlaceholder": {
+    "message": "e.g. Tell me the Korean meaning of an English sentence or word."
+  },
+  "slotDetail_temperatureTitle": {
+    "message": "Randomness (temperature: 0~2)"
+  },
+  "slotDetail_isGpt4": {
+    "message": "Use GPT4 (default: 3.5)"
+  },
+  "slotDetail_saveButtonText": {
+    "message": "Save"
+  },
+  "slotDetail_cancelButtonText": {
+    "message": "Cancel"
+  },
+  "responseMessageBox_responseTitle": {
+    "message": "Response"
+  },
+  "responseFixedMessageBox_responseTitle": {
+    "message": "Checky is here!"
+  },
+  "responseMessageBox_copyButtonText_copy": {
+    "message": "Copy Last Response"
+  },
+  "responseMessageBox_copyButtonText_copied": {
+    "message": "Copied!"
+  },
+  "responseMessageBox_sendButtonText": {
+    "message": "Send"
+  },
+  "responseMessageBox_stopButtonText": {
+    "message": "Stop"
+  },
+  "responseMessageBox_messageInputPlacepolder": {
+    "message": "e.g. Summarize the above content for me."
+  },
+  "errorMessageBox_errorTitle": {
+    "message": "Error"
+  },
+  "errorMessageBox_unknownError": {
+    "message": "Unknown Error"
+  }
+}
