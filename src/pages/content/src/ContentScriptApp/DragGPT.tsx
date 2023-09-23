@@ -93,27 +93,27 @@ export default function DragGPT() {
     },
   });
 
-  useEffect(() => {
-    const onMouseUp = async (event: MouseEvent) => {
-      await skipLoopCycleOnce();
-      send({
-        type: "TEXT_SELECTED",
-        data: {
-          selectedText: getSelectionText(),
-          selectedNodeRect: getSelectionNodeRect(),
-          requestButtonPosition: {
-            top: event.clientY + window.scrollY,
-            left: event.clientX + window.scrollX,
-          },
-        },
-      });
-    };
+  // useEffect(() => {
+  //   const onMouseUp = async (event: MouseEvent) => {
+  //     await skipLoopCycleOnce();
+  //     send({
+  //       type: "TEXT_SELECTED",
+  //       data: {
+  //         selectedText: getSelectionText(),
+  //         selectedNodeRect: getSelectionNodeRect(),
+  //         requestButtonPosition: {
+  //           top: event.clientY + window.scrollY,
+  //           left: event.clientX + window.scrollX,
+  //         },
+  //       },
+  //     });
+  //   };
 
-    window.document.addEventListener("mouseup", onMouseUp);
-    return () => {
-      window.document.removeEventListener("mouseup", onMouseUp);
-    };
-  }, []);
+  //   window.document.addEventListener("mouseup", onMouseUp);
+  //   return () => {
+  //     window.document.removeEventListener("mouseup", onMouseUp);
+  //   };
+  // }, []);
 
   useEffect(() => {
     const onContextMenu = (event: MouseEvent) => {

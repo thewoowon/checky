@@ -94,6 +94,7 @@ export default function CheckyGPT() {
 
       const url = toAbsoluteUrl(e.target.href);
 
+      // 링크가 들어 왔다는 것은 상태의 변화
       setDragLink(url.href);
     }
 
