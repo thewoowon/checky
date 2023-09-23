@@ -34,7 +34,7 @@ type QuickChattingPageProps = {
   onClickBackButton: () => void;
 };
 
-export default function QuickChattingPage({
+export default function CheckyPage({
   onClickBackButton,
 }: QuickChattingPageProps) {
   const { id: sessionId, regenerate: regenerateSessionId } =

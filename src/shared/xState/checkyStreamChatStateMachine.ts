@@ -1,5 +1,10 @@
 import { assign, createMachine } from "xstate";
 
+export type LinkQueueType = {
+  url: string;
+  title: string;
+};
+
 type Events =
   | { type: "QUERY_URL"; data: boolean }
   | { type: "QUERY"; data: boolean }
@@ -13,16 +18,25 @@ type Events =
     }
   | { type: "CHANGE_TEXT"; data: string }
   | { type: "RECEIVE_ING"; data: string }
-  | { type: "RECEIVE_DONE"; data: string };
+  | { type: "RECEIVE_DONE"; data: string }
+  | {
+      type: "ADD_LINK_QUEUE";
+      data: LinkQueueType;
+    }
+  | {
+      type: "CHANGE_LANGUAGE";
+      data: "ko" | "en";
+    };
 
 interface Context {
   inputText: string;
   chats: Chat[];
   tempResponse: string;
   isGpt4: boolean;
-  isWordCloud: boolean;
   error?: Error;
   cancelReceive?: () => unknown;
+  linkQueue?: LinkQueueType[];
+  language?: "ko" | "en";
 }
 
 type Services = {
@@ -42,7 +56,8 @@ const initialContext: Context = {
   chats: [],
   tempResponse: "",
   isGpt4: false,
-  isWordCloud: false,
+  linkQueue: [],
+  language: "ko",
 };
 
 const checkyStreamChatStateMachine = createMachine(
@@ -85,8 +100,11 @@ const checkyStreamChatStateMachine = createMachine(
           TOGGLE_IS_GPT4: {
             actions: "toggleIsGpt4",
           },
-          TOGGLE_WORD_CLOUD: {
-            actions: "toggleWordCloud",
+          ADD_LINK_QUEUE: {
+            actions: ["addLinkQueue"],
+          },
+          CHANGE_LANGUAGE: {
+            actions: "changeLanguage",
           },
         },
       },
@@ -108,8 +126,11 @@ const checkyStreamChatStateMachine = createMachine(
           TOGGLE_IS_GPT4: {
             actions: "toggleIsGpt4",
           },
-          TOGGLE_WORD_CLOUD: {
-            actions: "toggleWordCloud",
+          ADD_LINK_QUEUE: {
+            actions: ["addLinkQueue"],
+          },
+          CHANGE_LANGUAGE: {
+            actions: "changeLanguage",
           },
         },
       },
@@ -131,24 +152,36 @@ const checkyStreamChatStateMachine = createMachine(
           TOGGLE_IS_GPT4: {
             actions: "toggleIsGpt4",
           },
-          TOGGLE_WORD_CLOUD: {
-            actions: "toggleWordCloud",
+          ADD_LINK_QUEUE: {
+            actions: ["addLinkQueue"],
+          },
+          CHANGE_LANGUAGE: {
+            actions: "changeLanguage",
           },
         },
       },
       receiving: {
         on: {
           RECEIVE_ING: { target: "receiving", actions: "addResponseToken" },
-          RECEIVE_DONE: { target: "idle", actions: "replaceLastResponse" },
-          RECEIVE_CANCEL: { target: "idle", actions: "execCancelReceive" },
+          RECEIVE_DONE: {
+            target: "idle",
+            actions: ["replaceLastResponse", "popLinkQueue"],
+          },
+          RECEIVE_CANCEL: {
+            target: "idle",
+            actions: ["execCancelReceive", "popLinkQueue"],
+          },
           CHANGE_TEXT: {
             actions: "updateChatText",
           },
           TOGGLE_IS_GPT4: {
             actions: "toggleIsGpt4",
           },
-          TOGGLE_WORD_CLOUD: {
-            actions: "toggleWordCloud",
+          ADD_LINK_QUEUE: {
+            actions: ["addLinkQueue"],
+          },
+          CHANGE_LANGUAGE: {
+            actions: "changeLanguage",
           },
         },
       },
@@ -162,6 +195,21 @@ const checkyStreamChatStateMachine = createMachine(
     actions: {
       setChats: assign({
         chats: (_, event) => event.data,
+      }),
+      addLinkQueue: assign({
+        linkQueue: (context, event) => {
+          const linkQueue = context.linkQueue || [];
+          return linkQueue.concat(event.data);
+        },
+      }),
+      changeLanguage: assign({
+        language: (_, event) => event.data,
+      }),
+      popLinkQueue: assign({
+        linkQueue: (context) => {
+          const linkQueue = context.linkQueue || [];
+          return linkQueue.slice(1);
+        },
       }),
       addUserChat: assign({
         chats: (context) =>
@@ -232,9 +280,6 @@ const checkyStreamChatStateMachine = createMachine(
       }),
       resetChatData: assign({ chats: () => [] }),
       toggleIsGpt4: assign({ isGpt4: (context) => !context.isGpt4 }),
-      toggleWordCloud: assign({
-        isWordCloud: (context) => !context.isWordCloud,
-      }),
     },
     guards: {
       isValidText: (context) => context.inputText.length > 0,

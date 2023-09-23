@@ -15,6 +15,7 @@ import { PROMPT_GENERATE_PROMPT } from "@src/constant/promptGeneratePrompt";
 import { ChatHistoryStorage } from "@pages/background/lib/storage/chatHistoryStorage";
 import { AccessTokenStorage } from "./lib/storage/accessTokenStorage";
 import { checkyGPT } from "./lib/infra/checkyGPT";
+import { LanguageStorage } from "./lib/storage/languageStorage";
 
 reloadOnUpdate("pages/background");
 
@@ -26,18 +27,6 @@ type RequiredDataNullableInput<T extends Message> = {
 
 chrome.runtime.onInstalled.addListener(async function () {
   //checkCommandShortcuts();
-
-  // Create one test item for each context type.
-  const contexts: chrome.contextMenus.ContextType[] = ["link", "video"];
-  for (let i = 0; i < contexts.length; i++) {
-    const context = contexts[i];
-    const title = `체키로 ${context === "video" ? "비디오" : "링크"} 분석하기`;
-    chrome.contextMenus.create({
-      title: title,
-      contexts: [context],
-      id: context,
-    });
-  }
   chrome.runtime.openOptionsPage();
 });
 
@@ -228,7 +217,7 @@ chrome.runtime.onConnect.addListener((port) => {
           await chatGPT({
             input: "hello",
             apiKey: message.input,
-            slot: { type: "ChatGPT" },
+            slot: { type: "ChatGPT", language: "en" },
           }).catch((error) => {
             ApiKeyStorage.setApiKey(null);
             throw error;
@@ -289,7 +278,10 @@ chrome.runtime.onConnect.addListener((port) => {
           const apiKey = await ApiKeyStorage.getApiKey();
           const response = await chatGPT({
             chats: message.input?.messages,
-            slot: { type: message.input?.isGpt4 ? "ChatGPT4" : "ChatGPT" },
+            slot: {
+              type: message.input?.isGpt4 ? "ChatGPT4" : "ChatGPT",
+              language: message.input?.language ?? "en",
+            },
             apiKey,
             onDelta: (chunk) => {
               sendResponse({
@@ -312,6 +304,41 @@ chrome.runtime.onConnect.addListener((port) => {
           });
           break;
         }
+        case "RequestCheckyChatGPTStream": {
+          await QuickChatHistoryStorage.pushChatHistories({
+            role: "user",
+            content: message.input?.messages.at(-1)?.content ?? "",
+            isUrl: "text",
+          });
+          const apiKey = await ApiKeyStorage.getApiKey();
+          const response = await checkyGPT({
+            chats: message.input?.messages,
+            slot: {
+              type: message.input?.isGpt4 ? "ChatGPT4" : "ChatGPT",
+              language: message.input?.language ?? "en",
+            },
+            apiKey,
+            onDelta: (chunk) => {
+              sendResponse({
+                type: "RequestCheckyChatGPTStream",
+                data: {
+                  result: "",
+                  chunk,
+                },
+              });
+            },
+          });
+          await QuickChatHistoryStorage.pushChatHistories({
+            role: "assistant",
+            content: response.summaryResult,
+            isUrl: "text",
+          });
+          sendResponse({
+            type: "RequestQuickChatGPTStream",
+            data: { result: response.summaryResult, isDone: true },
+          });
+          break;
+        }
         case "RequestCheckyChatGPT": {
           await QuickChatHistoryStorage.pushChatHistories({
             role: "user",
@@ -321,7 +348,10 @@ chrome.runtime.onConnect.addListener((port) => {
           const apiKey = await ApiKeyStorage.getApiKey();
           const response = await checkyGPT({
             chats: message.input?.messages,
-            slot: { type: message.input?.isGpt4 ? "ChatGPT4" : "ChatGPT" },
+            slot: {
+              type: message.input?.isGpt4 ? "ChatGPT4" : "ChatGPT",
+              language: message.input?.language ?? "ko",
+            },
             apiKey,
             onDelta: (chunk) => {
               sendResponse({
@@ -349,7 +379,7 @@ chrome.runtime.onConnect.addListener((port) => {
           const slot = await SlotStorage.getSelectedSlot();
           const response = await chatGPT({
             chats: message.input?.chats,
-            slot: { type: slot.type },
+            slot: { type: slot.type, language: "en" },
             apiKey,
             onDelta: (chunk) => {
               sendResponse({
@@ -385,6 +415,7 @@ chrome.runtime.onConnect.addListener((port) => {
             slot: {
               type: "ChatGPT",
               system: PROMPT_GENERATE_PROMPT,
+              language: "en",
             },
             apiKey,
           });
@@ -461,13 +492,30 @@ chrome.runtime.onConnect.addListener((port) => {
           await chatGPT({
             input: "hello",
             apiKey: message.input,
-            slot: { type: "ChatGPT" },
+            slot: { type: "ChatGPT", language: "en" },
           }).catch((error) => {
             ApiKeyStorage.setApiKey(null);
             throw error;
           });
           await ApiKeyStorage.setApiKey(message.input);
           sendResponse({ type: "SaveAPIKey", data: "success" });
+          break;
+        }
+        case "GetLanguage": {
+          sendResponse({
+            type: "GetLanguage",
+            data: await LanguageStorage.getLanguage(),
+          });
+          break;
+        }
+        case "SaveLanguage": {
+          await LanguageStorage.saveLanguage(message.input);
+          sendResponse({ type: "SaveLanguage", data: "success" });
+          break;
+        }
+        case "ResetLanguage": {
+          await LanguageStorage.resetLanguage();
+          sendResponse({ type: "ResetLanguage", data: "success" });
           break;
         }
         default: {

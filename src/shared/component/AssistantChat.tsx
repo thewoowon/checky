@@ -9,6 +9,9 @@ export default function AssistantChat({ ...restProps }: AssistantChatProps) {
       style={{
         width: "100%",
         textAlign: "start",
+        borderTop: "1px solid #E2E8F0",
+        paddingTop: "1rem",
+        paddingBottom: "1rem",
       }}
     >
       {restProps.children}

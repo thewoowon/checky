@@ -50,6 +50,7 @@ declare global {
     topP?: number; // 단어 풀의 범위(0~1)
     frequencyPenalty?: number; // 자주 사용하는 단어 억제
     presencePenalty?: number; // 이미 사용된 단어 억제
+    language: "ko" | "en" = "ko";
   };
 
   type Slot = { id: string; name: string; isSelected: boolean } & ChatGPTSlot;
@@ -110,6 +111,16 @@ declare global {
     input?: {
       messages: Chat[];
       isGpt4: boolean;
+      language: "ko" | "en";
+    };
+    data?: { result: string; chunk?: string; isDone?: boolean };
+  };
+  type RequestCheckyChatGPTStream = {
+    type: "RequestCheckyChatGPTStream";
+    input?: {
+      messages: Chat[];
+      isGpt4: boolean;
+      language: "ko" | "en";
     };
     data?: { result: string; chunk?: string; isDone?: boolean };
   };
@@ -118,8 +129,14 @@ declare global {
     input?: {
       messages: Chat[];
       isGpt4: boolean;
+      language: "ko" | "en";
     };
     data?: { result: string; chunk?: string; isDone?: boolean };
+  };
+  type SaveLanguage = {
+    type: "SaveLanguage";
+    input: string;
+    data?: "success";
   };
   type SaveAPIKey = {
     type: "SaveAPIKey";
@@ -128,6 +145,11 @@ declare global {
   };
   type ResetAPIKey = {
     type: "ResetAPIKey";
+    input?: never;
+    data?: "success";
+  };
+  type ResetLanguage = {
+    type: "ResetLanguage";
     input?: never;
     data?: "success";
   };
@@ -148,6 +170,11 @@ declare global {
   };
   type GetAPIKey = {
     type: "GetAPIKey";
+    input?: never;
+    data?: string;
+  };
+  type GetLanguage = {
+    type: "GetLanguage";
     input?: never;
     data?: string;
   };
@@ -242,7 +269,11 @@ declare global {
     | RequestOnetimeChatGPT
     | RequestGenerateChatGPTPrompt
     | SaveAPIKey
-    | SaveAccessToken;
+    | SaveAccessToken
+    | GetLanguage
+    | SaveLanguage
+    | ResetLanguage
+    | RequestCheckyChatGPTStream;
 
   type RequestMessage<M = Message> = Omit<M, "data">;
   type ResponseMessage<M = Message> = Omit<M, "input" | "error">;

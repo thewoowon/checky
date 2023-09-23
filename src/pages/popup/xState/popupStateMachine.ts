@@ -86,6 +86,11 @@ const popupStateMachine = createMachine(
           EXIT_QUICK_CHAT: "slot_list_page",
         },
       },
+      checky_chat: {
+        on: {
+          EXIT_QUICK_CHAT: "slot_list_page",
+        },
+      },
       checking_api_key: {
         tags: "noApiKeyPage",
         invoke: {

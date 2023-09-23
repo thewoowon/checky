@@ -21,9 +21,22 @@ const saveAccessTokenToBackground = async (accessToken: string) => {
   });
 };
 
+const saveLanguageToBackground = async (language: string) => {
+  await sendMessageToBackgroundAsync({
+    type: "SaveLanguage",
+    input: language,
+  });
+};
+
 const getApiKeyFromBackground = async () => {
   return sendMessageToBackgroundAsync({
     type: "GetAPIKey",
+  });
+};
+
+const getLanguageFromBackground = async () => {
+  return sendMessageToBackgroundAsync({
+    type: "GetLanguage",
   });
 };
 
@@ -45,6 +58,14 @@ const resetAccessTokenFromBackground = () => {
   sendMessageToBackground({
     message: {
       type: "ResetAccessToken",
+    },
+  });
+};
+
+const resetLanguageFromBackground = () => {
+  sendMessageToBackground({
+    message: {
+      type: "ResetLanguage",
     },
   });
 };

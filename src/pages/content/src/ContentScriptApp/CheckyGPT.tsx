@@ -5,6 +5,7 @@ import checkyStateMachine from "./xState/checkyStateMachine";
 import FixedResponseMessageBox from "./components/messageBox/FixedResponseMessageBox";
 import FixedErrorMessageBox from "./components/messageBox/FixedErrorMessageBox";
 import { useEffect, useState } from "react";
+import useSelectedSlot from "./hooks/useSelectedSlot";
 
 const Container = styled.div`
   * {
@@ -43,7 +44,7 @@ async function getGPTResponseAsStream({
 }
 
 export default function CheckyGPT() {
-  const [dragLink, setDragLink] = useState<string | null>(null);
+  const selectedSlot = useSelectedSlot();
   const [state, send] = useMachine(checkyStateMachine, {
     services: {
       getGPTResponse: (context) => {
@@ -72,49 +73,12 @@ export default function CheckyGPT() {
     send("CLOSE_MESSAGE_BOX");
   };
 
-  useEffect(() => {
-    const toAbsoluteUrl = (function () {
-      let anchor: HTMLAnchorElement | null = null;
-
-      return function (url: string) {
-        if (!anchor) {
-          anchor = document.createElement("a");
-        }
-
-        anchor.href = url;
-
-        return new URL(anchor.href);
-      };
-    })();
-
-    function onDragStart(e: DragEvent) {
-      if (!(e.target instanceof HTMLAnchorElement)) {
-        return;
-      }
-
-      const url = toAbsoluteUrl(e.target.href);
-
-      // 링크가 들어 왔다는 것은 상태의 변화
-      setDragLink(url.href);
-    }
-
-    window.document.addEventListener("dragstart", onDragStart, {
-      capture: true,
-      passive: true,
-    });
-
-    return () => {
-      window.document.removeEventListener("dragstart", onDragStart);
-    };
-  }, []);
-
   return (
     <Container>
       {state.hasTag("showRequestMessages") && (
         <FixedResponseMessageBox
           onClose={closeMessageBox}
           initialChats={state.context.chats}
-          dragLink={dragLink}
         />
       )}
       {state.matches("error_message_box") && (

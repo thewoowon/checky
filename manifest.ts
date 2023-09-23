@@ -25,14 +25,7 @@ const manifest: chrome.runtime.ManifestV3 = {
     },
     default_title: "__MSG_extensionName__",
   },
-  permissions: [
-    "storage",
-    "activeTab",
-    "scripting",
-    "contextMenus",
-    "tabs",
-    "notifications",
-  ],
+  permissions: ["storage"],
   icons: {
     "34": "icon-34.png",
     "128": "icon-128.png",

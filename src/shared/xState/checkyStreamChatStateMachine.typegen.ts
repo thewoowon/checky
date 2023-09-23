@@ -48,10 +48,13 @@ export interface Typegen0 {
       | "error.platform.stream-chat-state.loading_url:invocation[0]";
     addInitialAssistantChat: "done.invoke.stream-chat-state.loading:invocation[0]";
     addInitialCheckyAssistantChat: "done.invoke.stream-chat-state.loading_url:invocation[0]";
+    addLinkQueue: "ADD_LINK_QUEUE";
     addResponseToken: "RECEIVE_ING";
     addUserChat: "QUERY" | "QUERY_URL";
+    changeLanguage: "CHANGE_LANGUAGE";
     execCancelReceive: "RECEIVE_CANCEL";
     exitChatting: "EXIT";
+    popLinkQueue: "RECEIVE_CANCEL" | "RECEIVE_DONE";
     replaceLastResponse: "RECEIVE_DONE";
     resetChatData: "RESET";
     resetChatText: "QUERY" | "QUERY_URL";
@@ -60,7 +63,6 @@ export interface Typegen0 {
       | "done.invoke.stream-chat-state.loading_url:invocation[0]";
     setChats: "done.invoke.stream-chat-state.init:invocation[0]";
     toggleIsGpt4: "TOGGLE_IS_GPT4";
-    toggleWordCloud: "TOGGLE_WORD_CLOUD";
     updateChatText: "CHANGE_TEXT";
   };
   eventsCausingDelays: {};

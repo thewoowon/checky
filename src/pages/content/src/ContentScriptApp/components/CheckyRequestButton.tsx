@@ -31,7 +31,7 @@ const StyledRequestButton = styled.button`
     transition: all ease-in-out 100ms;
   }
 
-  // 20도 , -20도 반복 
+  // 20도 , -20도 반복
 
   @keyframes rotate {
     0% {
@@ -43,6 +43,7 @@ const StyledRequestButton = styled.button`
     100% {
       transform: rotate(-20deg);
     }
+  }
 `;
 
 const labelTextInlineStyle: CSSProperties = {

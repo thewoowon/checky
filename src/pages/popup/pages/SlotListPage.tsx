@@ -126,6 +126,9 @@ export default function SlotListPage({
             <Button colorScheme="gray" size="xs" onClick={onClickResetButton}>
               {t("slotListPage_resetApiKeyButtonText")}
             </Button>
+            <Button colorScheme="gray" size="xs" onClick={onClickResetButton}>
+              Analysis
+            </Button>
           </HStack>
           <HStack justifyContent="space-between" w="100%">
             <Text color={COLORS.WHITE} fontWeight="bold">

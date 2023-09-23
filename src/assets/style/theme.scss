@@ -3,3 +3,23 @@
 }
 
 
+.drag-image {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+  cursor: move;
+  animation: rotate 1s infinite;
+}
+
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(20deg);
+  }
+  100% {
+    transform: rotate(-20deg);
+  }
+}

@@ -36,6 +36,7 @@
     "react-tsparticles": "^2.12.2",
     "react-wordcloud": "^1.2.7",
     "regenerator-runtime": "0.13.11",
+    "swiper": "^10.3.0",
     "tsparticles-slim": "^2.12.0",
     "xstate": "4.37.0"
   },

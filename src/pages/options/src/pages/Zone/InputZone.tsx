@@ -7,6 +7,7 @@ import { useMachine } from "@xstate/react";
 import NoApiKeyPage from "../NoApiPage";
 import SlotListPage from "@src/pages/popup/pages/SlotListPage";
 import QuickChattingPage from "@src/pages/popup/pages/QuickChattingPage";
+import CheckyPage from "@src/pages/popup/pages/CheckyPage";
 
 const saveApiKeyToBackground = async (apiKey: string) => {
   await sendMessageToBackgroundAsync({
@@ -74,6 +75,9 @@ const InputZone = () => {
       </div>
       {state.matches("quick_chat") && (
         <QuickChattingPage onClickBackButton={() => send("EXIT_QUICK_CHAT")} />
+      )}
+      {state.matches("checky_chat") && (
+        <CheckyPage onClickBackButton={() => send("EXIT_QUICK_CHAT")} />
       )}
     </>
   );

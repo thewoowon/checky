@@ -33,6 +33,7 @@ export async function checkyGPT({
   const summaryResponse = await requestSummaryApi({
     url: messages.at(-1)?.content ?? "",
     type: slot.type === "ChatGPT4" ? 1 : 0,
+    language: slot.language ?? "ko",
   });
 
   await handleSummaryError(summaryResponse);
@@ -76,7 +77,11 @@ async function parseSummaryResult(
   return result;
 }
 
-async function requestSummaryApi(body: { url: string; type: number }) {
+async function requestSummaryApi(body: {
+  url: string;
+  type: number;
+  language: "ko" | "en";
+}) {
   const endpoint = new URL("http://13.124.34.149:8080");
 
   // http://13.209.74.106:8080/crawling/result

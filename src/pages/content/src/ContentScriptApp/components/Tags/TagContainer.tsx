@@ -18,7 +18,7 @@ const TagContainer = ({ tags }: TagContainerProps) => {
         display: "flex",
         flexWrap: "wrap",
         gap: "0.5rem",
-        padding: "10px",
+        padding: "10px 0",
       }}
     >
       {tags.map((tag, index) => {

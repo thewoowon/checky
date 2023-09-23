@@ -5,7 +5,7 @@ export type FixedMessageBoxProps = {
   header: ReactNode;
   content: ReactNode;
   footer?: ReactNode;
-  width: number;
+  width?: number;
   onClose: () => void;
 } & ComponentPropsWithRef<"div">;
 
@@ -27,7 +27,7 @@ export default function FixedMessageBox({
         flexDirection: "column",
         zIndex: Z_INDEX.ROOT,
         whiteSpace: "pre-wrap",
-        width: width + "px",
+        width: width ? width + "px" : "100%",
         maxWidth: "500px",
         borderRadius: "6px",
         fontSize: "14px",
@@ -58,19 +58,6 @@ export default function FixedMessageBox({
           }}
         >
           {header}
-          <button
-            onClick={onClose}
-            style={{
-              cursor: "pointer",
-              margin: 0,
-              background: "transparent",
-              border: "none",
-              outline: "none",
-              borderRadius: "4px",
-            }}
-          >
-            X
-          </button>
         </div>
         <div
           style={{

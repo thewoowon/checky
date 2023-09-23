@@ -11,7 +11,6 @@ type ChatTextProps = PropsWithChildren<{
 export default function ChatText({
   isError,
   bold,
-  padding = 6,
   border = true,
   children,
   textAlign = "start",
@@ -23,11 +22,10 @@ export default function ChatText({
         borderRadius: "4px",
         whiteSpace: "pre-wrap",
         border: border ? "1px solid #f0ffff2e" : undefined,
-        padding: `${padding}px`,
         textAlign,
         color: isError ? "red" : "black",
         lineHeight: 1.3,
-        fontSize: "14px",
+        fontSize: "8px",
         fontWeight: bold ? "bold" : "normal",
         ...restProps,
       }}

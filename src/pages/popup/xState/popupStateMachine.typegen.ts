@@ -33,6 +33,7 @@ export interface Typegen0 {
   };
   matchesStates:
     | "checking_api_key"
+    | "checky_chat"
     | "init"
     | "no_api_key"
     | "quick_chat"

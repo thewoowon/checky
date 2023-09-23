@@ -4,12 +4,14 @@ type Events =
   | { type: "EXIT" | "QUERY" | "RESET" | "RECEIVE_CANCEL" | "TOGGLE_IS_GPT4" }
   | { type: "CHANGE_TEXT"; data: string }
   | { type: "RECEIVE_ING"; data: string }
-  | { type: "RECEIVE_DONE"; data: string };
+  | { type: "RECEIVE_DONE"; data: string }
+  | { type: "CHANGE_LANGUAGE"; data: "ko" | "en" };
 
 interface Context {
   inputText: string;
   chats: Chat[];
   tempResponse: string;
+  language: "ko" | "en";
   isGpt4: boolean;
   error?: Error;
   cancelReceive?: () => unknown;
@@ -29,6 +31,7 @@ const initialContext: Context = {
   chats: [],
   tempResponse: "",
   isGpt4: false,
+  language: "ko",
 };
 
 const streamChatStateMachine = createMachine(

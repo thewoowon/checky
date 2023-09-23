@@ -59,7 +59,13 @@ describe("SlotStorage test", () => {
     test("선택된 슬롯이 없으면 에러가 발생한다", async () => {
       // given
       const savedSlots: Slot[] = [
-        { type: "ChatGPT", id: "id", name: "name", isSelected: false },
+        {
+          type: "ChatGPT",
+          id: "id",
+          name: "name",
+          isSelected: false,
+          language: "ko",
+        },
       ];
       jest
         .spyOn(SlotStorage, "getAllSlots")
@@ -80,6 +86,7 @@ describe("SlotStorage test", () => {
         id: "id",
         name: "name",
         isSelected: true,
+        language: "ko",
       };
       const savedSlots: Slot[] = [savedSelectedSlot];
       jest
@@ -103,6 +110,7 @@ describe("SlotStorage test", () => {
         id: "id",
         name: "name",
         isSelected: false,
+        language: "ko",
       };
       jest
         .spyOn(SlotStorage, "getAllSlots")
@@ -125,6 +133,7 @@ describe("SlotStorage test", () => {
           id: "id1",
           name: "name",
           isSelected: false,
+          language: "ko",
         },
       ];
       const slot: Slot = {
@@ -132,6 +141,7 @@ describe("SlotStorage test", () => {
         id: "id2",
         name: "name",
         isSelected: false,
+        language: "ko",
       };
       jest
         .spyOn(SlotStorage, "getAllSlots")
@@ -154,6 +164,7 @@ describe("SlotStorage test", () => {
       id: "id",
       name: "name",
       isSelected: false,
+      language: "ko",
     };
     const savedSlots: Slot[] = [slot];
     const updatedSlot = { ...slot, name: "updated" };
@@ -179,6 +190,7 @@ describe("SlotStorage test", () => {
       id: slotId,
       name: "name",
       isSelected: false,
+      language: "ko",
     };
     const savedSots: Slot[] = [slot];
     jest
