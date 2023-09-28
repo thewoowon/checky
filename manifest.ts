@@ -57,19 +57,6 @@ const manifest: chrome.runtime.ManifestV3 = {
       matches: ["*://*/*"],
     },
   ],
-  commands: {
-    toggle: {
-      suggested_key: {
-        // 컨트롤과 시프트 그리고 콤마를 누르면 토글 기능이 실행됩니다.
-        default: "Ctrl+Shift+6",
-        mac: "Command+Shift+6",
-      },
-      description: "Toggle feature",
-    },
-  },
-  externally_connectable: {
-    matches: ["*://*.google.com/*"],
-  },
 };
 
 export default manifest;

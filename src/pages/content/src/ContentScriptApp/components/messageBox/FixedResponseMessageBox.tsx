@@ -27,6 +27,7 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import styled from "@emotion/styled";
 import { title } from "process";
+import { getCheckyResponseAsStream } from "@src/shared/services/getCheckyResponseAsStream";
 
 type FixedResponseMessageBoxProps = Omit<
   FixedMessageBoxProps,
@@ -98,11 +99,14 @@ export default function FixedResponseMessageBox({
           input: { sessionId, chats: context.chats.at(-1) as Chat },
         });
         return new Promise((resolve, reject) => {
-          getCheckyGPTResponse({
+          getCheckyResponseAsStream({
             language: context.language ?? "ko",
             isGpt4: context.isGpt4,
             messages: context.chats,
             onDelta: (chunk) => {
+              if (!chunk.startsWith("{")) {
+                return;
+              }
               send("RECEIVE_ING", { data: chunk });
               resolve({
                 firstChunk: chunk,
@@ -523,6 +527,14 @@ type ChatBoxProps = {
   chat: Chat;
 } & BoxProps;
 export const CheckyChatBox = ({ chat, ...restProps }: ChatBoxProps) => {
+  function isJSON(str: string) {
+    try {
+      JSON.parse(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
   function wrapSpecificTextInSpan(
     inputString: string,
     targetText: string
@@ -547,8 +559,7 @@ export const CheckyChatBox = ({ chat, ...restProps }: ChatBoxProps) => {
 
   if (chat.role === "assistant") {
     if (chat.isUrl === "url") {
-      const myJson = JSON.parse(chat.content);
-      if (!myJson || myJson.code !== 0) {
+      if (!isJSON(chat.content)) {
         return (
           <div
             style={{
@@ -568,158 +579,192 @@ export const CheckyChatBox = ({ chat, ...restProps }: ChatBoxProps) => {
               height={128}
               alt="error"
             />
-            <div>값을 불러올 수 없어요!</div>
+            <div>데이터에 이상이 있습니다.</div>
           </div>
         );
-      }
-
-      const {
-        data: { summaryContent, tags, adsPercent, keywords, title },
-      }: {
-        data: {
-          title: string;
-          summaryContent: string;
-          tags: string[];
-          adsPercent: number;
-          keywords: {
-            keyword: string;
-            wikiContent: string;
-            wikiUrl: string;
-          }[];
-        };
-      } = myJson;
-
-      if (!summaryContent) {
-        return <div>요약된 결과가 없습니다.</div>;
-      }
-
-      const tagList: TagObject[] = [];
-
-      let replaceString = summaryContent as string;
-      replaceString = replaceString.replace(/"/g, "");
-      replaceString = replaceString.replace(/\\n/g, "<br/><br/>");
-
-      tags.forEach((item: string, index: number) => {
-        replaceString = wrapSpecificTextInSpan(replaceString, item);
-        const newTag = {
-          name: item.trim(),
-          // color: COLORS[Math.floor(Math.random() * COLORS.length)],
-          color: "#A02501",
-          id: index,
-        };
-        tagList.push(newTag);
-      });
-
-      return (
-        <AssistantChat {...restProps}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
+      } else {
+        const myJson = JSON.parse(chat.content);
+        if (!myJson || myJson.code !== 0) {
+          return (
             <div
               style={{
-                fontSize: "12px",
-                fontWeight: "600",
-                color: "#00000",
-                padding: "12px 0",
-              }}
-            >
-              {title}
-            </div>
-          </div>
-          <div
-            style={{
-              fontSize: "7px",
-              fontWeight: "400",
-              color: "#797979",
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "6px",
-                fontWeight: "400",
-                color: "#797979",
-              }}
-            >
-              Checky
-            </span>{" "}
-            측정 결과
-            <div
-              style={{
-                borderRadius: "50%",
-                border: "1px solid #797979",
-                width: "12px",
-                height: "12px",
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "8px",
+                width: "100%",
+                gap: "4px",
+                padding: "6px 0px",
+                height: "300px",
               }}
             >
-              ?
+              <img
+                src="https://imagedelivery.net/6qzLODAqs2g1LZbVYqtuQw/67938d5f-9aba-498d-00a3-f4ba75465c00/public"
+                width={80}
+                height={128}
+                alt="error"
+              />
+              <div>값을 불러올 수 없어요!</div>
             </div>
-          </div>
-          <AdsWarning adsPercent={adsPercent} />
-          <TagContainer tags={tagList} />
-          <ChatText>{parse(replaceString)}</ChatText>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-              padding: "8px 0",
-              overflowX: "scroll",
-            }}
-          >
-            {keywords.map((item, index) => {
-              return (
-                <a
-                  key={index}
-                  href={item.wikiUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <div
-                    style={{
-                      width: "117px",
-                      height: "60px",
-                      backgroundColor: "#FFFFFF",
-                      borderRadius: "5px",
-                      border: "0.5px solid #A02501",
-                      fontSize: "9px",
-                      fontWeight: "400",
-                      padding: "4px 6px",
-                    }}
+          );
+        }
+
+        const keywords: {
+          keyword: string;
+          wikiContent: string;
+          wikiUrl: string;
+        }[] = [
+          {
+            keyword: "코로나",
+            wikiContent: "코로나 바이러스 감염증-19",
+            wikiUrl:
+              "https://ko.wikipedia.org/wiki/%EC%BD%94%EB%A1%9C%EB%82%98_%EB%B0%94%EC%9D%B4%EB%9F%AC%EC%8A%A4_%EA%B0%90%EC%97%BC%EC%A6%9D%EC%A6%9D-19",
+          },
+        ];
+
+        const {
+          data: { summaryContent, tags, adsPercent, title },
+        }: {
+          data: {
+            title: string;
+            summaryContent: string;
+            tags: string[];
+            adsPercent: number;
+          };
+        } = myJson;
+
+        if (!summaryContent) {
+          return <div>요약된 결과가 없습니다.</div>;
+        }
+
+        const tagList: TagObject[] = [];
+
+        let replaceString = summaryContent as string;
+        replaceString = replaceString.replace(/"/g, "");
+        replaceString = replaceString.replace(/\\n/g, "<br/><br/>");
+
+        tags.forEach((item: string, index: number) => {
+          replaceString = wrapSpecificTextInSpan(replaceString, item);
+          const newTag = {
+            name: item.trim(),
+            // color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            color: "#A02501",
+            id: index,
+          };
+          tagList.push(newTag);
+        });
+
+        return (
+          <AssistantChat {...restProps}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  color: "#00000",
+                  padding: "12px 0",
+                }}
+              >
+                {title}
+              </div>
+            </div>
+            <div
+              style={{
+                fontSize: "7px",
+                fontWeight: "400",
+                color: "#797979",
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "6px",
+                  fontWeight: "400",
+                  color: "#797979",
+                }}
+              >
+                Checky
+              </span>{" "}
+              측정 결과
+              <div
+                style={{
+                  borderRadius: "50%",
+                  border: "1px solid #797979",
+                  width: "12px",
+                  height: "12px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "8px",
+                }}
+              >
+                ?
+              </div>
+            </div>
+            <AdsWarning adsPercent={adsPercent} />
+            <TagContainer tags={tagList} />
+            <ChatText>{parse(replaceString)}</ChatText>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+                padding: "8px 0",
+                overflowX: "scroll",
+              }}
+            >
+              {keywords.map((item, index) => {
+                return (
+                  <a
+                    key={index}
+                    href={item.wikiUrl}
+                    target="_blank"
+                    rel="noreferrer"
                   >
-                    {item.keyword}
                     <div
                       style={{
-                        fontSize: "8px",
-                        color: "#787878",
+                        width: "117px",
+                        height: "60px",
+                        backgroundColor: "#FFFFFF",
+                        borderRadius: "5px",
+                        border: "0.5px solid #A02501",
+                        fontSize: "9px",
                         fontWeight: "400",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        wordWrap: "break-word",
-                        lineHeight: "1.2em",
-                        height: "3.6em",
-                        WebkitLineClamp: 3,
+                        padding: "4px 6px",
                       }}
                     >
-                      {parse(item.wikiContent)}
+                      {item.keyword}
+                      <div
+                        style={{
+                          fontSize: "8px",
+                          color: "#787878",
+                          fontWeight: "400",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          wordWrap: "break-word",
+                          lineHeight: "1.2em",
+                          height: "3.6em",
+                          WebkitLineClamp: 3,
+                        }}
+                      >
+                        {parse(item.wikiContent)}
+                      </div>
                     </div>
-                  </div>
-                </a>
-              );
-            })}
-          </div>
-        </AssistantChat>
-      );
+                  </a>
+                );
+              })}
+            </div>
+          </AssistantChat>
+        );
+      }
     } else {
       return (
         <AssistantChat {...restProps}>

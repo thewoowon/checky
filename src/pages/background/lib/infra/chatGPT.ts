@@ -108,7 +108,12 @@ async function parseResult(
     const lines = value.split("\n\n").filter(Boolean);
     const chunks = lines
       .map((line) => line.substring(5).trim())
-      .map((line) => JSON.parse(line))
+      .map((line) => {
+        if (!isJSON(line)) {
+          return "";
+        }
+        return JSON.parse(line);
+      })
       .map((data) => data.choices.at(0).delta.content)
       .filter(Boolean);
 
@@ -118,6 +123,15 @@ async function parseResult(
     });
   }
   return result;
+}
+
+function isJSON(str: string) {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 async function requestApi(apiKey: string, body: CreateChatCompletionRequest) {

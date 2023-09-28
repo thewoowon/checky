@@ -16,6 +16,7 @@ import { ChatHistoryStorage } from "@pages/background/lib/storage/chatHistorySto
 import { AccessTokenStorage } from "./lib/storage/accessTokenStorage";
 import { checkyGPT } from "./lib/infra/checkyGPT";
 import { LanguageStorage } from "./lib/storage/languageStorage";
+import { checkyGPTStream } from "./lib/infra/checkyGPTStream";
 
 reloadOnUpdate("pages/background");
 
@@ -311,7 +312,7 @@ chrome.runtime.onConnect.addListener((port) => {
             isUrl: "text",
           });
           const apiKey = await ApiKeyStorage.getApiKey();
-          const response = await checkyGPT({
+          const response = await checkyGPTStream({
             chats: message.input?.messages,
             slot: {
               type: message.input?.isGpt4 ? "ChatGPT4" : "ChatGPT",
@@ -334,7 +335,7 @@ chrome.runtime.onConnect.addListener((port) => {
             isUrl: "text",
           });
           sendResponse({
-            type: "RequestQuickChatGPTStream",
+            type: "RequestCheckyChatGPTStream",
             data: { result: response.summaryResult, isDone: true },
           });
           break;
