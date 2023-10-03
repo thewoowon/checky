@@ -240,7 +240,7 @@ const checkyStreamChatStateMachine = createMachine(
           return context.chats.map((chat, index) => {
             // if last index
             if (index === context.chats.length - 1) {
-              return { ...chat, content: chat.content + event.data };
+              return { ...chat, content: event.data };
             }
             return chat;
           });

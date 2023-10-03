@@ -84,8 +84,9 @@ async function parseSummaryStreamResult(
       .filter(Boolean);
 
     chunks.forEach((chunk) => {
-      result += chunk;
-      onDelta?.(chunk);
+      result = chunk;
+      // 여기서도 isJSON으로 체크
+      if (isJSON(chunk)) onDelta?.(chunk);
     });
   }
   return result;
@@ -118,9 +119,7 @@ async function requestSummaryStreamApi(body: {
   type: number;
   language: "ko" | "en";
 }) {
-  const endpoint = new URL("http://13.124.34.149:8080");
-
-  // http://13.209.74.106:8080/crawling/result/
+  const endpoint = new URL("http://13.124.34.149:8080/v2");
 
   endpoint.pathname = "/crawling/result/stream";
 
@@ -130,7 +129,7 @@ async function requestSummaryStreamApi(body: {
   // response에서 data 뽑아내기
   return fetch(endpoint.href, {
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "text/event-stream",
       withCredentials: "true",
       Accept: "text/event-stream",
     },
@@ -152,4 +151,13 @@ function convertChatsToMessages(chats: Chat[]): ChatCompletionRequestMessage[] {
         content: chat.content,
       };
     });
+}
+
+function isJSON(str: string) {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }

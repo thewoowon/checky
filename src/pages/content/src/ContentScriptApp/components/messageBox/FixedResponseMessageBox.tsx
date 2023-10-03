@@ -104,9 +104,6 @@ export default function FixedResponseMessageBox({
             isGpt4: context.isGpt4,
             messages: context.chats,
             onDelta: (chunk) => {
-              if (!chunk.startsWith("{")) {
-                return;
-              }
               send("RECEIVE_ING", { data: chunk });
               resolve({
                 firstChunk: chunk,
